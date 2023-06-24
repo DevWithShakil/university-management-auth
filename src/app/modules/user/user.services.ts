@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import config from '../../../config/index';
@@ -33,13 +32,6 @@ async function createStudent(
   const academicSemester = await AcademicSemester.findById(
     student.academicSemester
   ).lean();
-
-  //hash password
-
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bycrypt_salt_rounds)
-  );
 
   //generate student id
   let newUserAllData = null;
