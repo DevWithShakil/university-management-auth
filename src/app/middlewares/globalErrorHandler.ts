@@ -1,5 +1,8 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-console */
 /* eslint-disable no-unused-expressions */
-import { ErrorRequestHandler, Request, Response } from 'express';
+import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
+import { Error } from 'mongoose';
 import { ZodError } from 'zod';
 import config from '../../config';
 import ApiError from '../../errors/ApiError';
@@ -12,18 +15,18 @@ import { errorLogger } from '../../shared/logger';
 const globalErrorHandler: ErrorRequestHandler = (
   error,
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ) => {
   config.env === 'development'
-    ? // eslint-disable-next-line no-console
-      console.log('globalErrorHandler---', error)
-    : errorLogger.error('globalErrorHandler-- - ', error);
+    ? console.log(`🐱‍🏍 globalErrorHandler ~~`, { error })
+    : errorLogger.error(`🐱‍🏍 globalErrorHandler ~~`, error);
 
   let statusCode = 500;
-  let message = 'Something went wrong';
+  let message = 'Something went wrong !';
   let errorMessages: IGenericErrorMessage[] = [];
 
-  if (error.name === 'ValidatorError') {
+  if (error?.name === 'ValidationError') {
     const simplifiedError = handleValidationError(error);
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
@@ -40,7 +43,7 @@ const globalErrorHandler: ErrorRequestHandler = (
     errorMessages = simplifiedError.errorMessages;
   } else if (error instanceof ApiError) {
     statusCode = error?.statusCode;
-    message = error?.message;
+    message = error.message;
     errorMessages = error?.message
       ? [
           {
