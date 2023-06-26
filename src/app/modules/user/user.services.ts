@@ -1,15 +1,22 @@
-import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import config from '../../../config/index';
 import ApiError from '../../../errors/ApiError';
 import { AcademicSemester } from '../academicSemester/academicSemesterModel';
+import { IAdmin } from '../admin/admin.interface';
+import { Admin } from '../admin/admin.model';
+import { IFaculty } from '../faculty/faculty.interface';
+import { Faculty } from '../faculty/faculty.model';
 import { IStudent } from '../students/student.interface';
 import { Student } from '../students/student.model';
 import { IAcademicSemester } from './../academicSemester/academicSemester.interface';
 import { IUser } from './user.interface';
 import { User } from './user.model';
-import { generateStudentId } from './user.utils';
+import {
+  generateAdminId,
+  generateFacultyId,
+  generateStudentId,
+} from './user.utils';
 
 async function createStudent(
   student: IStudent,
@@ -25,13 +32,6 @@ async function createStudent(
   const academicSemester = await AcademicSemester.findById(
     student.academicSemester
   ).lean();
-
-  //hash password
-
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bycrypt_salt_rounds)
-  );
 
   //generate student id
   let newUserAllData = null;

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Request, RequestHandler, Response } from 'express';
 import httpStatus from 'http-status';
 import catchAsync from '../../../shared/catchAsync';
@@ -17,7 +18,35 @@ const createStudent: RequestHandler = catchAsync(
     });
   }
 );
+const createFaculty: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const { student, ...userData } = req.body;
+
+    const result = await UserService.createStudent(student, userData);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'user created successfully!',
+      data: result,
+    });
+  }
+);
+const createAdmin: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const { student, ...userData } = req.body;
+
+    const result = await UserService.createStudent(student, userData);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'user created successfully!',
+      data: result,
+    });
+  }
+);
 
 export const UserController = {
   createStudent,
+  createFaculty,
+  createAdmin,
 };
